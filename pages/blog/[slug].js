@@ -15,7 +15,7 @@ export async function getStaticProps({ params }) {
 }
 
 export default function Post({ postData }) {
-  const { title, date, tags, readingTime, contentHtml, excerpt } = postData;
+  const { title, date, tags, readingTime, contentHtml, excerpt, wordCount } = postData;
 
   const formattedDate = date
     ? new Date(date).toLocaleDateString("en-US", {
@@ -67,9 +67,20 @@ export default function Post({ postData }) {
                 url: "https://blog.prodhosh.me",
               },
               url: `https://blog.prodhosh.me/blog/${postData.slug}`,
+              mainEntityOfPage: {
+                "@type": "WebPage",
+                "@id": `https://blog.prodhosh.me/blog/${postData.slug}`,
+              },
+              image: {
+                "@type": "ImageObject",
+                url: "https://blog.prodhosh.me/og-image.png",
+                width: 1200,
+                height: 630,
+              },
               ...(date && { datePublished: new Date(date).toISOString() }),
               ...(date && { dateModified: new Date(date).toISOString() }),
               keywords: tags ? tags.join(", ") : "",
+              wordCount: wordCount || 0,
               inLanguage: "en-IN",
               isPartOf: {
                 "@type": "Blog",

@@ -26,6 +26,25 @@
   color: var(--button-bg);
 }
 
+.socials {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.socialIcon {
+  color: var(--jacket);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.socialIcon:hover {
+  color: var(--button-bg);
+  transform: translateY(-2px);
+}
+
 .sub {
   font-family: "Montserrat", sans-serif;
   font-size: 13px;

@@ -18,16 +18,18 @@ export default function Home({ allPosts }) {
     <>
       <Head>
         <title>ProdhoshBlogs | Thoughts on Tech, AI &amp; Building Things</title>
-        <meta
-          name="description"
-          content="Prodhosh VS's blog — writing about Full Stack Dev, AI, React, Python, and building software products."
-        />
-        <meta property="og:title" content="ProdhoshBlogs" />
+        <meta name="description" content="Prodhosh VS writes about Full Stack Development, AI, open-source, and shipping real-world software products." />
+        <link rel="canonical" href="https://blog.prodhosh.me" />
+
+        <meta property="og:type" content="website" />
         <meta property="og:url" content="https://blog.prodhosh.me" />
-        <meta
-          property="og:description"
-          content="Thoughts on tech, AI, and building things — by Prodhosh VS."
-        />
+        <meta property="og:title" content="ProdhoshBlogs | Thoughts on Tech, AI & Building Things" />
+        <meta property="og:description" content="Prodhosh VS writes about Full Stack Development, AI, open-source, and shipping real-world software products." />
+
+        <meta name="twitter:title" content="ProdhoshBlogs | Thoughts on Tech, AI & Building Things" />
+        <meta name="twitter:description" content="Prodhosh VS writes about Full Stack Development, AI, open-source, and shipping real-world software products." />
+
+        <meta name="keywords" content="Prodhosh VS, blog, tech blog, AI, full stack, React, Next.js, Python, open-source" />
       </Head>
 
       {/* ── Hero ── */}

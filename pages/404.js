@@ -7,6 +7,7 @@ export default function Custom404() {
     <>
       <Head>
         <title>404 – Page Not Found | ProdhoshBlogs</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className={styles.container}>
         <div className={styles.code}>404</div>

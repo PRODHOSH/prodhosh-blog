@@ -30,10 +30,16 @@ export default function BlogIndex({ allPosts, allTags }) {
     <>
       <Head>
         <title>All Posts | ProdhoshBlogs</title>
-        <meta
-          name="description"
-          content="Browse all blog posts by Prodhosh VS on tech, AI, and building software."
-        />
+        <meta name="description" content="Browse all blog posts by Prodhosh VS — articles on tech, AI, full stack development, and building software." />
+        <link rel="canonical" href="https://blog.prodhosh.me/blog" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://blog.prodhosh.me/blog" />
+        <meta property="og:title" content="All Posts | ProdhoshBlogs" />
+        <meta property="og:description" content="Browse all blog posts by Prodhosh VS — articles on tech, AI, full stack development, and building software." />
+
+        <meta name="twitter:title" content="All Posts | ProdhoshBlogs" />
+        <meta name="twitter:description" content="Browse all blog posts by Prodhosh VS — articles on tech, AI, full stack development, and building software." />
       </Head>
 
       <div className={styles.container}>

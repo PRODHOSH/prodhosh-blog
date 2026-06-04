@@ -57,6 +57,31 @@
   box-shadow: 0 0 0 3px rgba(190, 149, 196, 0.2);
 }
 
+.loginInputMono {
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.2em;
+  font-size: 18px;
+  text-align: center;
+}
+
+.loginLabel {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: -6px;
+}
+
+.loginLabelHint {
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
 .loginBtn {
   padding: 12px;
   background: var(--button-bg);

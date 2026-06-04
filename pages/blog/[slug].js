@@ -30,8 +30,55 @@ export default function Post({ postData }) {
       <Head>
         <title>{title} | ProdhoshBlogs</title>
         <meta name="description" content={excerpt || title} />
+        <link rel="canonical" href={`https://blog.prodhosh.me/blog/${postData.slug}`} />
+
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://blog.prodhosh.me/blog/${postData.slug}`} />
         <meta property="og:title" content={`${title} | ProdhoshBlogs`} />
-        <meta property="og:description" content={excerpt || ""} />
+        <meta property="og:description" content={excerpt || title} />
+        {date && <meta property="article:published_time" content={new Date(date).toISOString()} />}
+        <meta property="article:author" content="Prodhosh VS" />
+        {tags && tags.map((tag) => <meta key={tag} property="article:tag" content={tag} />)}
+
+        <meta name="twitter:title" content={`${title} | ProdhoshBlogs`} />
+        <meta name="twitter:description" content={excerpt || title} />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              headline: title,
+              description: excerpt || title,
+              author: {
+                "@type": "Person",
+                name: "Prodhosh VS",
+                url: "https://prodhosh.me",
+                sameAs: [
+                  "https://github.com/PRODHOSH",
+                  "https://www.linkedin.com/in/prodhoshvs/",
+                  "https://twitter.com/prodhosh3",
+                ],
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "ProdhoshBlogs",
+                url: "https://blog.prodhosh.me",
+              },
+              url: `https://blog.prodhosh.me/blog/${postData.slug}`,
+              ...(date && { datePublished: new Date(date).toISOString() }),
+              ...(date && { dateModified: new Date(date).toISOString() }),
+              keywords: tags ? tags.join(", ") : "",
+              inLanguage: "en-IN",
+              isPartOf: {
+                "@type": "Blog",
+                name: "ProdhoshBlogs",
+                url: "https://blog.prodhosh.me",
+              },
+            }),
+          }}
+        />
       </Head>
 
       <article className={styles.article}>

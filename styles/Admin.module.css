@@ -1,0 +1,621 @@
+/* ── Login ── */
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.loginCard {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 8px 32px rgba(94, 84, 142, 0.12);
+  text-align: center;
+}
+
+.loginLogo {
+  font-family: "Agustina Regular", cursive;
+  font-size: 1.6rem;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.bracket { color: var(--jacket); }
+
+.loginSub {
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.loginInput {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.loginInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(190, 149, 196, 0.2);
+}
+
+.loginBtn {
+  padding: 12px;
+  background: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.loginBtn:hover:not(:disabled) { background: var(--button-hover); }
+.loginBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.loginError {
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  color: #d73a49;
+  margin: 0;
+}
+
+/* ── Admin layout ── */
+.adminLayout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--dark);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebarLogo {
+  font-family: "Agustina Regular", cursive;
+  font-size: 1.3rem;
+  color: white;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.sidebarLogo .bracket { color: var(--accent); }
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.sidebarLink {
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, color 0.15s;
+}
+
+.sidebarLink:hover { background: rgba(255,255,255,0.08); color: white; }
+
+.sidebarLinkActive {
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 15px;
+  color: white;
+  background: rgba(190, 149, 196, 0.2);
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+}
+
+.logoutBtn {
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
+}
+
+.logoutBtn:hover { color: #d73a49; }
+
+/* ── Dashboard main ── */
+.adminMain {
+  flex: 1;
+  padding: 36px 40px;
+  overflow-y: auto;
+}
+
+.adminHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.adminTitle {
+  font-family: "Google Sans Bold", sans-serif;
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.adminSub {
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.newPostBtn {
+  display: inline-block;
+  background: var(--button-bg);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 15px;
+  text-decoration: none;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.newPostBtn:hover { background: var(--button-hover); color: white; }
+
+/* ── Post table ── */
+.postTable {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(94,84,142,0.07);
+}
+
+.tableHead {
+  display: grid;
+  grid-template-columns: 2fr 1fr 100px 120px 130px;
+  padding: 12px 20px;
+  background: var(--highlight);
+  font-family: "Google Sans Medium", sans-serif;
+  font-size: 13px;
+  color: var(--jacket);
+  gap: 16px;
+  align-items: center;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 100px 120px 130px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  gap: 16px;
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.tableRow:hover { background: #fdf8fc; }
+
+.postTitle {
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.postTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tagChip {
+  background: var(--highlight);
+  color: var(--jacket);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.postDate {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.publishedBadge {
+  background: #28a74520;
+  color: #28a745;
+  border: 1px solid #28a74540;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-family: "Google Sans Medium", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.publishedBadge:hover { background: #28a74530; }
+
+.draftBadge {
+  background: rgba(101,94,122,0.1);
+  color: var(--text-secondary);
+  border: 1px solid rgba(101,94,122,0.2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-family: "Google Sans Medium", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.draftBadge:hover { background: rgba(101,94,122,0.18); }
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.editBtn {
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 13px;
+  color: var(--jacket);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+
+.editBtn:hover { background: var(--highlight); }
+
+.deleteBtn {
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 13px;
+  color: #d73a49;
+  background: none;
+  border: 1px solid rgba(215,58,73,0.3);
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.deleteBtn:hover { background: rgba(215,58,73,0.08); }
+
+.loadingRow {
+  padding: 60px;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-secondary);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 80px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-secondary);
+}
+
+/* ── Post editor ── */
+.editorLayout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.editorHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: var(--dark);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+
+.editorBack {
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.editorBack:hover { color: white; }
+
+.editorTitle {
+  font-family: "Google Sans Medium", sans-serif;
+  font-size: 16px;
+  color: white;
+  flex: 1;
+}
+
+.editorActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editorError {
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  color: #ff7b7b;
+}
+
+.draftBtn {
+  padding: 8px 18px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.draftBtn:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
+.draftBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.publishBtn {
+  padding: 8px 20px;
+  background: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.publishBtn:hover:not(:disabled) { background: var(--button-hover); }
+.publishBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.editorBody {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Metadata sidebar */
+.metaPanel {
+  width: 280px;
+  flex-shrink: 0;
+  background: white;
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.metaField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metaLabel {
+  font-family: "Google Sans Medium", sans-serif;
+  font-size: 12px;
+  color: var(--jacket);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.metaInput {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  background: var(--bg);
+  transition: border-color 0.2s;
+}
+
+.metaInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(190,149,196,0.2);
+}
+
+.metaTextarea {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  background: var(--bg);
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.metaTextarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(190,149,196,0.2);
+}
+
+.metaHint {
+  font-family: "Montserrat", sans-serif;
+  font-size: 11px;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.metaToggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+}
+
+.toggleOn {
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 4px 14px;
+  font-family: "Google Sans Medium", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggleOff {
+  background: rgba(101,94,122,0.12);
+  color: var(--text-secondary);
+  border: 1px solid rgba(101,94,122,0.2);
+  border-radius: 12px;
+  padding: 4px 14px;
+  font-family: "Google Sans Medium", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Editor pane */
+.editorPane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editorToolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.toolBtn {
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.toolBtn:hover { background: var(--highlight); border-color: var(--border); }
+
+.toolBtnActive {
+  padding: 5px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--highlight);
+  color: var(--jacket);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.toolSep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.markdownTextarea {
+  flex: 1;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 24px 32px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text);
+  background: #fefcfe;
+  overflow-y: auto;
+}
+
+.previewPane {
+  flex: 1;
+  padding: 32px 48px;
+  overflow-y: auto;
+  background: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--text);
+  max-width: 800px;
+}
+
+.previewPane h1, .previewPane h2, .previewPane h3 {
+  font-family: "Google Sans Bold", sans-serif;
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+.previewPane h2 { border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.previewPane code { background: rgba(94,84,142,0.1); color: var(--jacket); padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+.previewPane pre { background: var(--dark); color: #abe338; padding: 18px 22px; border-radius: var(--radius); overflow-x: auto; }
+.previewPane pre code { background: none; color: inherit; }
+.previewPane blockquote { border-left: 4px solid var(--accent); padding: 8px 16px; background: rgba(190,149,196,0.08); margin: 20px 0; }
+.previewPane a { color: var(--jacket); }
+.previewPane ul, .previewPane ol { padding-left: 24px; }
+.previewPane p { margin-bottom: 16px; }

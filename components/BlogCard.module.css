@@ -1,0 +1,86 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 4px 3px 20px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  color: var(--text);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+  color: var(--text);
+}
+
+.featured {
+  border-color: var(--accent);
+}
+
+.body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  background-color: var(--highlight);
+  color: var(--jacket);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: "Google Sans Medium", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+
+.title {
+  font-family: "Google Sans Bold", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.excerpt {
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  flex: 1;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.dot {
+  opacity: 0.5;
+}

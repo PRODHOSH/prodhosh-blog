@@ -1,0 +1,20 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  width: 90vw;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+@media (max-width: 768px) {
+  .main {
+    width: 92vw;
+    padding: 28px 0;
+  }
+}

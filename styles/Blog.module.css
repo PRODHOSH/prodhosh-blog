@@ -1,0 +1,119 @@
+.container {
+  animation: fade_up 0.5s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+}
+
+.pageHeader {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pageTitle {
+  font-family: "Google Sans Bold", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.pageSub {
+  font-family: "Montserrat", sans-serif;
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+.controls {
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.8);
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.searchInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(190, 149, 196, 0.2);
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tagBtn {
+  padding: 5px 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: "Google Sans Regular", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tagBtn:hover {
+  background: var(--highlight);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.tagBtnActive {
+  background: var(--jacket);
+  border-color: var(--jacket);
+  color: #fff;
+}
+
+.tagBtnActive:hover {
+  background: var(--button-bg);
+  border-color: var(--button-bg);
+  color: #fff;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 0;
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-secondary);
+  font-size: 18px;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .pageTitle {
+    font-size: 36px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

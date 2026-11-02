@@ -1,59 +1,32 @@
 .container {
-  min-height: 60vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 60px 0;
-  animation: fade_up 0.5s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+  align-items: flex-start;
+  padding-block: clamp(40px, 8vw, 96px);
 }
-
 .code {
-  font-family: "Google Sans Bold", sans-serif;
-  font-size: 120px;
-  font-weight: 700;
-  color: var(--accent);
-  line-height: 1;
-  margin-bottom: 14px;
-  opacity: 0.35;
+  font-family: var(--f-mono);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--accent-ink);
 }
-
 .title {
-  font-family: "Google Sans Bold", sans-serif;
-  font-size: 34px;
-  color: var(--text);
-  margin-bottom: 12px;
+  margin-top: 14px;
+  font-size: clamp(40px, 7vw, 80px);
+  letter-spacing: -0.045em;
+  line-height: 0.98;
 }
-
+.title :global(.serif) {
+  color: var(--accent);
+}
 .sub {
-  font-family: "Montserrat", sans-serif;
-  font-size: 17px;
-  color: var(--text-secondary);
-  margin-bottom: 36px;
+  margin-top: 22px;
+  color: var(--text-2);
+  max-width: 30em;
 }
-
 .actions {
   display: flex;
-  align-items: center;
-  gap: 16px;
   flex-wrap: wrap;
-  justify-content: center;
-}
-
-.secondaryBtn {
-  font-family: "Google Sans Regular", sans-serif;
-  font-size: 16px;
-  color: var(--jacket);
-  text-decoration: none;
-  padding: 12px 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: all 0.2s ease;
-}
-
-.secondaryBtn:hover {
-  background: var(--highlight);
-  border-color: var(--accent);
-  color: var(--text);
+  gap: 12px;
+  margin-top: 32px;
 }

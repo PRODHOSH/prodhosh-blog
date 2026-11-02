@@ -1,0 +1,15 @@
+{
+  "name": "ProdhoshBlogs",
+  "short_name": "prodhosh/blogs",
+  "description": "Thoughts on tech, AI & building things by Prodhosh VS.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "lang": "en-IN",
+  "background_color": "#f8eee8",
+  "theme_color": "#f8eee8",
+  "icons": [
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/apple-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

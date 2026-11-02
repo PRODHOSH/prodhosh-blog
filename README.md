@@ -48,47 +48,38 @@ So I built ProdhoshBlogs. It sits at `blog.prodhosh.me` right next to my portfol
 
 ## What I built
 
-### Frontend
+### Reading experience
 
-**Home page**
-Has a hero section with the illustration from my portfolio and shows the most recent posts. First thing you see gives you a feel for who I am and what I write about.
+- **Light-first design** with a dark mode toggle that remembers your choice. Same warm peach and orange as my portfolio, with Bricolage Grotesque, Instrument Serif and JetBrains Mono.
+- **Home, article archive and topic pages.** Search, topic filters (shareable URLs), load-more, featured post, related posts and previous/next navigation.
+- **Post pages** with a sticky table of contents, reading progress bar, heading anchors, syntax-highlighted code blocks with copy buttons, share bar (copy link, X, LinkedIn, WhatsApp, Reddit, native share) and optional Giscus comments.
+- **RSS feed** (`/feed.xml`), sitemap with image entries, and a custom 404.
+- Fully responsive. Tables and code scroll inside their own box, topic chips scroll sideways, and the menu is a full-screen drawer on phones.
 
-**Blog listing**
-All posts in one place with tag-based filtering and search. You can filter by topic or just search by keyword. Keeps things easy to browse as the post count grows.
+### SEO and sharing
 
-**Individual post pages**
-Each post renders full markdown with proper formatting for headings, code blocks, lists, and links. Shows reading time so you know what you are getting into before you start. Has a back button and links to my portfolio at the bottom.
+Every page gets its own canonical URL, Open Graph and Twitter tags, and JSON-LD (WebSite, Blog, BlogPosting, BreadcrumbList). Social cards are **generated on the fly** at `/og` from the post title, tags, date and cover image, so every shared link has a unique preview. Per-post SEO title and meta description overrides live in the editor, with a Google-style preview.
 
-**Custom 404**
-A proper not-found page instead of the default one. Small thing but it matters for the overall feel.
+### Admin (`/admin`)
 
-**Responsive design**
-Works on mobile, tablet, and desktop. Matches the exact purple color scheme from my portfolio so both sites feel like one cohesive thing.
+- Sign-in with password + authenticator code + Cloudflare Turnstile. Signed, expiring sessions, same-origin checks on every write, and login rate limiting.
+- **Dashboard** with search, status filters (published, drafts, scheduled) and one-click publish/unpublish.
+- **Editor** with formatting toolbar, live split preview that uses the exact same pipeline as the public site, auto-slug, tag chips, cover image, featured flag, publish scheduling, SEO panel, Ctrl+S, autosave to the browser and an unsaved-changes warning.
+- **Media library.** Drag, drop or paste images. They are resized and compressed in the browser, then stored in Postgres and served from `/media/...` with long-lived caching. No extra storage account needed.
 
-### Backend
-
-Built a full backend so I can write and publish posts without ever touching code or doing a redeploy. Posts live in a real serverless Postgres database. I write in markdown with a live preview, set tags, add an excerpt, and hit publish.
-
-New posts go live within 60 seconds automatically using Next.js ISR (Incremental Static Regeneration). The page revalidates in the background so readers always get fast static pages and I still get instant publishing.
-
-The whole writing experience is behind password protection so only I can access it.
+Publishing revalidates the affected pages immediately, so a post is live the moment you press Publish.
 
 ---
 
-## How publishing works
+## Setup
 
+```bash
+npm install
+cp .env.local.example .env.local   # fill in the values
+npm run db:push                    # creates/updates tables
+npm run setup:2fa                  # prints your authenticator secret
+npm run dev
 ```
-Write post in markdown  ->  Hit publish  ->  Post is in the database
-                                                      |
-                                                      v
-                                         Next.js revalidates the page
-                                         within 60 seconds automatically
-                                                      |
-                                                      v
-                                         Post is live at blog.prodhosh.me
-```
-
-No git commits. No Vercel deploys. No waiting. Just write and publish.
 
 ---
 
@@ -99,14 +90,16 @@ No git commits. No Vercel deploys. No waiting. Just write and publish.
 | Next.js 14 (Pages Router) | ISR support out of the box, posts go live fast without a full rebuild |
 | Neon Postgres (AWS Singapore) | Serverless Postgres hosted on AWS ap-southeast-1, never pauses on the free tier, auto-resumes instantly |
 | Drizzle ORM | Lightweight, clean database queries without the overhead of heavier ORMs |
-| CSS Modules | Scoped styles that match the exact approach used in my portfolio |
+| CSS Modules | Scoped styles with shared design tokens in `styles/globals.css` |
+| unified / rehype | One markdown pipeline (GFM, sanitising, highlighting, TOC) shared by the site and the editor preview |
+| next/og | Dynamic social cards on the edge |
 | Vercel | Best Next.js hosting available, easy custom subdomain setup |
 
 ---
 
 ## Design
 
-The blog intentionally matches [prodhosh.me](https://prodhosh.me) pixel for pixel on fonts, colors, and spacing. Same Agustina font for the logo, same Google Sans for body text, same purple palette throughout. The idea is that both sites feel like one place, not two separate things that happen to share a domain.
+The blog shares its palette with [prodhosh.me](https://prodhosh.me) (warm peach, ink black and orange) and its type system with [links.prodhosh.me](https://links.prodhosh.me), so the three sites feel like one place.
 
 ---
 

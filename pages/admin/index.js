@@ -1,124 +1,189 @@
-import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
+import CoverArt from "../../components/CoverArt";
+import AdminShell from "../../components/admin/AdminShell";
+import ConfirmDialog from "../../components/admin/ConfirmDialog";
+import { useToast } from "../../components/admin/Toast";
+import { api } from "../../lib/client";
+import { formatDate } from "../../lib/utils";
 import styles from "../../styles/Admin.module.css";
 
+function statusOf(p) {
+  if (!p.published) return "draft";
+  if (p.publishedAt && new Date(p.publishedAt) > new Date()) return "scheduled";
+  return "published";
+}
+
+const FILTERS = [
+  ["all", "All"],
+  ["published", "Published"],
+  ["draft", "Drafts"],
+  ["scheduled", "Scheduled"],
+];
+
 export default function AdminDashboard() {
-  const router = useRouter();
-  const [allPosts, setAllPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const toast = useToast();
+  const [posts, setPosts] = useState(null);
+  const [filter, setFilter] = useState("all");
+  const [query, setQuery] = useState("");
+  const [confirm, setConfirm] = useState(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    fetch("/api/posts")
-      .then((r) => r.json())
-      .then((data) => { setAllPosts(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+    api("/api/posts")
+      .then(setPosts)
+      .catch((e) => {
+        setPosts([]);
+        toast(e.message, "error");
+      });
+  }, [toast]);
 
-  async function togglePublish(post) {
-    const res = await fetch(`/api/posts/${post.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...post, published: !post.published }),
-    });
-    if (res.ok) {
-      const updated = await res.json();
-      setAllPosts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+  async function togglePublish(p) {
+    try {
+      const updated = await api(`/api/posts/${p.id}`, {
+        method: "PUT",
+        body: { ...p, content: (await api(`/api/posts/${p.id}`)).content, published: !p.published },
+      });
+      const { content, ...meta } = updated;
+      setPosts((prev) => prev.map((x) => (x.id === p.id ? { ...x, ...meta } : x)));
+      toast(updated.published ? "Published" : "Moved to drafts");
+    } catch (e) {
+      toast(e.message, "error");
     }
   }
 
-  async function deletePost(id) {
-    if (!confirm("Delete this post permanently?")) return;
-    await fetch(`/api/posts/${id}`, { method: "DELETE" });
-    setAllPosts((prev) => prev.filter((p) => p.id !== id));
+  async function remove() {
+    setBusy(true);
+    try {
+      await api(`/api/posts/${confirm.id}`, { method: "DELETE" });
+      setPosts((prev) => prev.filter((x) => x.id !== confirm.id));
+      toast("Post deleted");
+    } catch (e) {
+      toast(e.message, "error");
+    }
+    setBusy(false);
+    setConfirm(null);
   }
 
-  async function logout() {
-    await fetch("/api/auth", { method: "DELETE" });
-    router.push("/admin/login");
-  }
+  const counts = useMemo(() => {
+    const c = { all: 0, published: 0, draft: 0, scheduled: 0 };
+    (posts || []).forEach((p) => {
+      c.all++;
+      c[statusOf(p)]++;
+    });
+    return c;
+  }, [posts]);
 
-  const published = allPosts.filter((p) => p.published).length;
-  const drafts = allPosts.length - published;
+  const shown = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return (posts || []).filter(
+      (p) =>
+        (filter === "all" || statusOf(p) === filter) &&
+        (!q || `${p.title} ${(p.tags || []).join(" ")} ${p.slug}`.toLowerCase().includes(q))
+    );
+  }, [posts, filter, query]);
 
   return (
-    <>
-      <Head><title>Admin Dashboard | ProdhoshBlogs</title></Head>
-      <div className={styles.adminLayout}>
-
-        {/* Sidebar */}
-        <aside className={styles.sidebar}>
-          <div className={styles.sidebarLogo}>
-            <span className={styles.bracket}>&lt;</span>
-            Admin
-            <span className={styles.bracket}>/&gt;</span>
-          </div>
-          <nav className={styles.sidebarNav}>
-            <span className={styles.sidebarLinkActive}>Posts</span>
-            <Link href="/admin/new" className={styles.sidebarLink}>New Post</Link>
-            <Link href="/" className={styles.sidebarLink} target="_blank">View Blog ↗</Link>
-          </nav>
-          <button onClick={logout} className={styles.logoutBtn}>Log out</button>
-        </aside>
-
-        {/* Main */}
-        <main className={styles.adminMain}>
-          <div className={styles.adminHeader}>
-            <div>
-              <h1 className={styles.adminTitle}>Posts</h1>
-              <p className={styles.adminSub}>
-                {allPosts.length} total · {published} published · {drafts} draft{drafts !== 1 ? "s" : ""}
-              </p>
-            </div>
-            <Link href="/admin/new" className={styles.newPostBtn}>+ New Post</Link>
-          </div>
-
-          {loading ? (
-            <div className={styles.loadingRow}>Loading…</div>
-          ) : allPosts.length === 0 ? (
-            <div className={styles.emptyState}>
-              <p>No posts yet.</p>
-              <Link href="/admin/new" className={styles.newPostBtn}>Write your first post</Link>
-            </div>
-          ) : (
-            <div className={styles.postTable}>
-              <div className={styles.tableHead}>
-                <span>Title</span>
-                <span>Tags</span>
-                <span>Status</span>
-                <span>Date</span>
-                <span>Actions</span>
-              </div>
-              {allPosts.map((post) => (
-                <div key={post.id} className={styles.tableRow}>
-                  <span className={styles.postTitle}>{post.title}</span>
-                  <span className={styles.postTags}>
-                    {(post.tags || []).map((t) => (
-                      <span key={t} className={styles.tagChip}>{t}</span>
-                    ))}
-                  </span>
-                  <span>
-                    <button
-                      onClick={() => togglePublish(post)}
-                      className={post.published ? styles.publishedBadge : styles.draftBadge}
-                    >
-                      {post.published ? "Published" : "Draft"}
-                    </button>
-                  </span>
-                  <span className={styles.postDate}>
-                    {new Date(post.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                  </span>
-                  <span className={styles.actions}>
-                    <Link href={`/admin/edit/${post.id}`} className={styles.editBtn}>Edit</Link>
-                    <button onClick={() => deletePost(post.id)} className={styles.deleteBtn}>Delete</button>
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </main>
+    <AdminShell
+      title="Posts"
+      actions={
+        <Link href="/admin/new" className={styles.btnPrimary}>
+          + New post
+        </Link>
+      }
+    >
+      <div className={styles.stats}>
+        {FILTERS.map(([key, label]) => (
+          <button key={key} className={`${styles.stat} ${filter === key ? styles.statActive : ""}`} onClick={() => setFilter(key)}>
+            <span className={styles.statNum}>{posts ? counts[key] : "–"}</span>
+            <span>{label}</span>
+          </button>
+        ))}
       </div>
-    </>
+
+      <div className={styles.toolbar}>
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by title, tag or slug…"
+          className={styles.input}
+          aria-label="Search posts"
+        />
+      </div>
+
+      {posts === null ? (
+        <p className={styles.muted}>Loading…</p>
+      ) : shown.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>{posts.length === 0 ? "No posts yet." : "Nothing matches your filter."}</p>
+          {posts.length === 0 && (
+            <Link href="/admin/new" className={styles.btnPrimary}>
+              Write your first post
+            </Link>
+          )}
+        </div>
+      ) : (
+        <ul className={styles.postList}>
+          {shown.map((p) => {
+            const st = statusOf(p);
+            return (
+              <li key={p.id} className={styles.postRow}>
+                <div className={styles.rowThumb}>
+                  {p.coverImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={p.coverImage} alt="" loading="lazy" />
+                  ) : (
+                    <CoverArt seed={p.slug} />
+                  )}
+                </div>
+                <div className={styles.rowMain}>
+                  <Link href={`/admin/edit/${p.id}`} className={styles.rowTitle}>
+                    {p.title}
+                  </Link>
+                  <div className={styles.rowMeta}>
+                    <span className={`${styles.badge} ${styles[`badge_${st}`]}`}>{st}</span>
+                    {p.featured && <span className={`${styles.badge} ${styles.badge_featured}`}>featured</span>}
+                    <span>{formatDate(p.publishedAt || p.createdAt, { year: "numeric", month: "short", day: "numeric" })}</span>
+                    <span>{p.wordCount} words</span>
+                    {(p.tags || []).slice(0, 3).map((t) => (
+                      <span key={t} className="chip">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className={styles.rowActions}>
+                  <Link href={`/admin/edit/${p.id}`} className={styles.btn}>
+                    Edit
+                  </Link>
+                  {st !== "draft" && (
+                    <a href={`/blog/${p.slug}`} target="_blank" rel="noopener noreferrer" className={styles.btn}>
+                      View ↗
+                    </a>
+                  )}
+                  <button className={styles.btn} onClick={() => togglePublish(p)}>
+                    {p.published ? "Unpublish" : "Publish"}
+                  </button>
+                  <button className={styles.btnGhostDanger} onClick={() => setConfirm(p)}>
+                    Delete
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {confirm && (
+        <ConfirmDialog
+          title="Delete this post?"
+          body={`"${confirm.title}" will be permanently removed. This can't be undone.`}
+          busy={busy}
+          onConfirm={remove}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+    </AdminShell>
   );
 }

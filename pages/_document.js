@@ -1,57 +1,38 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import { SITE } from "../lib/site";
 
 export default function Document() {
   return (
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
-        <meta name="author" content="Prodhosh VS" />
-        <meta name="theme-color" content="#5E548E" />
+        <meta name="author" content={SITE.author.name} />
+        <meta name="theme-color" content={SITE.themeColor} />
+        <meta name="application-name" content={SITE.name} />
+        <meta name="apple-mobile-web-app-title" content={SITE.name} />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="color-scheme" content="light" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="generator" content="Next.js" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="me" href={SITE.author.url} />
+        <link rel="author" href={SITE.author.url} />
 
-        {/* Preconnect for performance (Core Web Vitals) */}
-        <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
-
-        {/* Favicon */}
-        <link rel="icon" type="image/png" href="/favicon.png" />
-        <link rel="shortcut icon" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
-
-        {/* Default OG — overridden per page */}
-        <meta property="og:site_name" content="ProdhoshBlogs" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://blog.prodhosh.me/og-image.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="ProdhoshBlogs — Thoughts on Tech, AI & Building Things" />
-        <meta property="og:locale" content="en_IN" />
-
-        {/* Default Twitter Card — overridden per page */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@prodhosh3" />
-        <meta name="twitter:creator" content="@prodhosh3" />
-        <meta name="twitter:image" content="https://blog.prodhosh.me/og-image.png" />
-        <meta name="twitter:image:alt" content="ProdhoshBlogs — Thoughts on Tech, AI & Building Things" />
-
-        {/* Font Awesome */}
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-          crossOrigin="anonymous"
-        />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
+        <link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS`} href={`${SITE.url}/feed.xml`} />
+        <link rel="alternate" type="application/feed+json" title={`${SITE.name} JSON feed`} href={`${SITE.url}/feed.json`} />
+        <link rel="alternate" type="text/plain" title="llms.txt" href={`${SITE.url}/llms.txt`} />
+        <link rel="sitemap" type="application/xml" href={`${SITE.url}/sitemap.xml`} />
       </Head>
       <body>
         <Main />
         <NextScript />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-32JNX7ZWHL" />
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`} />
         <script
           dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-32JNX7ZWHL');
-            `,
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${SITE.gaId}');`,
           }}
         />
       </body>

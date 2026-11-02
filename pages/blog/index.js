@@ -1,97 +1,161 @@
-import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import SEO, { breadcrumbLd } from "../../components/SEO";
 import BlogCard from "../../components/BlogCard";
-import { getSortedPostsData, getAllTags } from "../../lib/posts";
+import { getAllTags, getSortedPostsData } from "../../lib/posts";
+import { SITE, ids } from "../../lib/site";
+import { tagSlug } from "../../lib/utils";
 import styles from "../../styles/Blog.module.css";
+
+const PAGE_SIZE = 9;
 
 export async function getStaticProps() {
   const allPosts = await getSortedPostsData();
-  const allTags = await getAllTags();
-  return { props: { allPosts, allTags }, revalidate: 60 };
+  const allTags = await getAllTags(allPosts);
+  return { props: { allPosts, allTags }, revalidate: 300 };
 }
 
 export default function BlogIndex({ allPosts, allTags }) {
+  const router = useRouter();
   const [activeTag, setActiveTag] = useState("all");
   const [query, setQuery] = useState("");
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  const ready = useRef(false);
 
-  const filtered = allPosts.filter((post) => {
-    const matchTag =
-      activeTag === "all" ||
-      (Array.isArray(post.tags) && post.tags.includes(activeTag));
-    const q = query.toLowerCase();
-    const matchSearch =
-      !q ||
-      post.title.toLowerCase().includes(q) ||
-      (post.excerpt && post.excerpt.toLowerCase().includes(q));
-    return matchTag && matchSearch;
-  });
+  // Restore filters from the URL once, so filtered views are shareable.
+  useEffect(() => {
+    if (!router.isReady || ready.current) return;
+    ready.current = true;
+    if (typeof router.query.tag === "string") setActiveTag(router.query.tag);
+    if (typeof router.query.q === "string") setQuery(router.query.q);
+  }, [router.isReady, router.query]);
+
+  useEffect(() => {
+    if (!ready.current) return;
+    const q = {};
+    if (activeTag !== "all") q.tag = activeTag;
+    if (query.trim()) q.q = query.trim();
+    router.replace({ pathname: "/blog", query: q }, undefined, { shallow: true, scroll: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTag, query]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return allPosts.filter((p) => {
+      const tagOk = activeTag === "all" || p.tags.some((t) => tagSlug(t) === activeTag);
+      const hay = `${p.title} ${p.excerpt} ${p.tags.join(" ")}`.toLowerCase();
+      return tagOk && (!q || hay.includes(q));
+    });
+  }, [allPosts, activeTag, query]);
+
+  useEffect(() => setVisible(PAGE_SIZE), [activeTag, query]);
 
   return (
     <>
-      <Head>
-        <title>All Posts | ProdhoshBlogs</title>
-        <meta name="description" content="Browse all blog posts by Prodhosh VS — articles on tech, AI, full stack development, and building software." />
-        <link rel="canonical" href="https://blog.prodhosh.me/blog" />
+      <SEO
+        title="All Articles"
+        description={`Browse all ${allPosts.length} articles by ${SITE.author.name} on ${allTags
+          .slice(0, 5)
+          .map((t) => t.name)
+          .join(", ")} and more. Search by keyword or filter by topic.`}
+        keywords={[...SITE.keywords, ...allTags.map((t) => t.name)]}
+        path="/blog"
+        jsonLd={[
+          {
+            "@type": "CollectionPage",
+            isPartOf: { "@id": ids.website() },
+            about: { "@id": ids.blog() },
+            name: `All articles | ${SITE.name}`,
+            url: `${SITE.url}/blog`,
+            mainEntity: {
+              "@type": "ItemList",
+              itemListElement: allPosts.slice(0, 20).map((p, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                url: `${SITE.url}/blog/${p.slug}`,
+                name: p.title,
+              })),
+            },
+          },
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Articles", path: "/blog" },
+          ]),
+        ]}
+      />
 
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://blog.prodhosh.me/blog" />
-        <meta property="og:title" content="All Posts | ProdhoshBlogs" />
-        <meta property="og:description" content="Browse all blog posts by Prodhosh VS — articles on tech, AI, full stack development, and building software." />
-
-        <meta name="twitter:title" content="All Posts | ProdhoshBlogs" />
-        <meta name="twitter:description" content="Browse all blog posts by Prodhosh VS — articles on tech, AI, full stack development, and building software." />
-      </Head>
-
-      <div className={styles.container}>
+      <div className={`container ${styles.container}`}>
         <header className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>All Posts</h1>
+          <p className="eyebrow">Archive</p>
+          <h1 className={styles.pageTitle}>
+            All <span className="serif">articles</span>
+          </h1>
           <p className={styles.pageSub}>
-            {allPosts.length} article{allPosts.length !== 1 ? "s" : ""} on
-            tech, AI &amp; building things
+            {allPosts.length} article{allPosts.length !== 1 ? "s" : ""} on tech, AI &amp; building things.
           </p>
         </header>
 
         <div className={styles.controls}>
-          <input
-            type="text"
-            placeholder="Search posts..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className={styles.searchInput}
-            aria-label="Search posts"
-          />
-          <div className={styles.tagRow}>
-            <button
-              className={`${styles.tagBtn} ${
-                activeTag === "all" ? styles.tagBtnActive : ""
-              }`}
-              onClick={() => setActiveTag("all")}
-            >
+          <div className={styles.searchWrap}>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <input
+              type="search"
+              placeholder="Search articles…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className={styles.searchInput}
+              aria-label="Search articles"
+            />
+          </div>
+          <div className={styles.tagRow} role="group" aria-label="Filter by topic">
+            <button className={`chip ${activeTag === "all" ? "active" : ""}`} onClick={() => setActiveTag("all")}>
               All
             </button>
-            {allTags.map((tag) => (
+            {allTags.map((t) => (
               <button
-                key={tag}
-                className={`${styles.tagBtn} ${
-                  activeTag === tag ? styles.tagBtnActive : ""
-                }`}
-                onClick={() => setActiveTag(tag)}
+                key={t.slug}
+                className={`chip ${activeTag === t.slug ? "active" : ""}`}
+                onClick={() => setActiveTag(t.slug)}
               >
-                {tag}
+                {t.name}
               </button>
             ))}
           </div>
         </div>
 
         {filtered.length > 0 ? (
-          <div className={styles.grid}>
-            {filtered.map((post) => (
-              <BlogCard key={post.slug} post={post} />
-            ))}
-          </div>
+          <>
+            <p className={styles.count} aria-live="polite">
+              {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+            </p>
+            <div className={styles.grid}>
+              {filtered.slice(0, visible).map((post) => (
+                <BlogCard key={post.slug} post={post} />
+              ))}
+            </div>
+            {visible < filtered.length && (
+              <div className={styles.more}>
+                <button className="ghost-button" onClick={() => setVisible((v) => v + PAGE_SIZE)}>
+                  Load more ({filtered.length - visible} left)
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className={styles.empty}>
-            <p>No posts found. Try a different search or tag.</p>
+            <p>No articles match that. Try a different search or topic.</p>
+            <button
+              className="ghost-button"
+              onClick={() => {
+                setQuery("");
+                setActiveTag("all");
+              }}
+            >
+              Clear filters
+            </button>
           </div>
         )}
       </div>

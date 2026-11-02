@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
+import { SESSION_COOKIE, verifySessionToken } from "./lib/auth";
 
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Allow login page through always
   if (pathname === "/admin/login") return NextResponse.next();
 
-  const token = request.cookies.get("admin_token")?.value;
-
-  if (!token || token !== process.env.ADMIN_SECRET) {
+  const token = request.cookies.get(SESSION_COOKIE)?.value;
+  if (!(await verifySessionToken(token))) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  res.headers.set("Cache-Control", "no-store");
+  return res;
 }
 
 export const config = {

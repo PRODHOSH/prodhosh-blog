@@ -1,102 +1,136 @@
-import Head from "next/head";
 import Link from "next/link";
+import SEO, { personLd, websiteLd } from "../components/SEO";
 import BlogCard from "../components/BlogCard";
-import FeelingProud from "../components/FeelingProud";
-import { getSortedPostsData } from "../lib/posts";
+import HeroArt from "../components/HeroArt";
+import { getAllTags, getSortedPostsData } from "../lib/posts";
+import { SITE, absUrl, ids } from "../lib/site";
 import styles from "../styles/Home.module.css";
 
 export async function getStaticProps() {
   const allPosts = await getSortedPostsData();
-  return { props: { allPosts }, revalidate: 60 };
+  const tags = (await getAllTags(allPosts)).slice(0, 12);
+  return { props: { allPosts: allPosts.slice(0, 12), total: allPosts.length, tags }, revalidate: 300 };
 }
 
-export default function Home({ allPosts }) {
-  const featured = allPosts.slice(0, 2);
-  const recent = allPosts.slice(2, 8);
+export default function Home({ allPosts, total, tags }) {
+  // Prefer an explicitly featured post; otherwise the newest one.
+  const lead = allPosts.find((p) => p.featured) || allPosts[0];
+  const rest = allPosts.filter((p) => p !== lead).slice(0, 6);
 
   return (
     <>
-      <Head>
-        <title>ProdhoshBlogs | Thoughts on Tech, AI &amp; Building Things</title>
-        <meta name="description" content="Prodhosh VS writes about Full Stack Development, AI, open-source, and shipping real-world software products." />
-        <link rel="canonical" href="https://blog.prodhosh.me" />
+      <SEO
+        fullTitle={`${SITE.name} | Full Stack, AI & Open-Source Engineering Blog`}
+        description={`${SITE.description} ${total} article${total === 1 ? "" : "s"} on ${tags
+          .slice(0, 4)
+          .map((t) => t.name)
+          .join(", ")} and more.`}
+        keywords={[...SITE.keywords, ...tags.map((t) => t.name)]}
+        path="/"
+        jsonLd={[
+          personLd(),
+          websiteLd(),
+          {
+            "@type": "Blog",
+            "@id": ids.blog(),
+            name: SITE.name,
+            url: SITE.url,
+            description: SITE.description,
+            inLanguage: SITE.language,
+            isPartOf: { "@id": ids.website() },
+            author: { "@id": ids.person() },
+            publisher: { "@id": ids.person() },
+            blogPost: allPosts.slice(0, 10).map((p) => ({
+              "@type": "BlogPosting",
+              headline: p.title,
+              url: absUrl(`/blog/${p.slug}`),
+              datePublished: p.date,
+              dateModified: p.updated,
+              image: absUrl(p.coverImage || "/icon.png"),
+            })),
+          },
+        ]}
+      />
 
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://blog.prodhosh.me" />
-        <meta property="og:title" content="ProdhoshBlogs | Thoughts on Tech, AI & Building Things" />
-        <meta property="og:description" content="Prodhosh VS writes about Full Stack Development, AI, open-source, and shipping real-world software products." />
-
-        <meta name="twitter:title" content="ProdhoshBlogs | Thoughts on Tech, AI & Building Things" />
-        <meta name="twitter:description" content="Prodhosh VS writes about Full Stack Development, AI, open-source, and shipping real-world software products." />
-
-        <meta name="keywords" content="Prodhosh VS, blog, tech blog, AI, full stack, React, Next.js, Python, open-source" />
-      </Head>
-
-      {/* ── Hero ── */}
-      <section className={styles.hero}>
-        <div className={styles.heroContent}>
-          <p className={styles.heroEyebrow}>Welcome to my blog</p>
+      <section className={`container ${styles.hero}`}>
+        <div className={styles.heroText}>
+          <p className={styles.eyebrow}>The blog of Prodhosh VS</p>
           <h1 className={styles.heroTitle}>
-            Thoughts on Tech,
-            <br />
-            <span className={styles.heroAccent}>AI &amp; Building Things</span>
+            Thoughts on tech, <span className={`serif ${styles.accent}`}>AI &amp; building things.</span>
           </h1>
-          <p className={styles.heroSubtitle}>
-            I write about Full Stack Development, Artificial Intelligence,
-            open-source, and the journey of shipping real-world software.
+          <p className={styles.heroSub}>
+            Full stack development, artificial intelligence, open-source — and the honest story of shipping real-world
+            software.
           </p>
-          <div className={styles.heroCTA}>
+          <div className={styles.cta}>
             <Link href="/blog" className="main-button">
-              Read All Posts
+              Read the articles
             </Link>
-            <a
-              href="https://prodhosh.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.portfolioLink}
-            >
-              Visit Portfolio ↗
+            <a href="/feed.xml" className="ghost-button">
+              Subscribe via RSS
             </a>
           </div>
+          <dl className={styles.stats}>
+            <div>
+              <dt>Articles</dt>
+              <dd>{total}</dd>
+            </div>
+            <div>
+              <dt>Topics</dt>
+              <dd>{tags.length}</dd>
+            </div>
+          </dl>
         </div>
-
-        <div className={styles.heroDecoration}>
-          <FeelingProud />
+        <div className={styles.heroArt}>
+          <HeroArt />
         </div>
       </section>
 
-      {/* ── Featured Posts ── */}
-      {featured.length > 0 && (
-        <section className={styles.section}>
+      {lead && (
+        <section className={`container ${styles.section}`} aria-labelledby="lead-h">
+          <h2 id="lead-h" className={styles.sectionTitle}>
+            {lead.featured ? "Featured" : "Latest"}
+          </h2>
+          <BlogCard post={lead} featured />
+        </section>
+      )}
+
+      {rest.length > 0 && (
+        <section className={`container ${styles.section}`} aria-labelledby="recent-h">
           <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>Featured Posts</h2>
-            <p className={styles.sectionSub}>Hand-picked reads worth your time</p>
+            <h2 id="recent-h" className={styles.sectionTitle}>
+              More to read
+            </h2>
+            <Link href="/blog" className={styles.viewAll}>
+              View all →
+            </Link>
           </div>
-          <div className={styles.featuredGrid}>
-            {featured.map((post) => (
-              <BlogCard key={post.slug} post={post} featured />
+          <div className={styles.grid}>
+            {rest.map((p) => (
+              <BlogCard key={p.slug} post={p} />
             ))}
           </div>
         </section>
       )}
 
-      {/* ── Recent Posts ── */}
-      {recent.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>Recent Posts</h2>
-            <p className={styles.sectionSub}>Fresh off the keyboard</p>
-          </div>
-          <div className={styles.postsGrid}>
-            {recent.map((post) => (
-              <BlogCard key={post.slug} post={post} />
+      {tags.length > 0 && (
+        <section className={`container ${styles.section}`} aria-labelledby="topics-h">
+          <h2 id="topics-h" className={styles.sectionTitle}>
+            Browse by topic
+          </h2>
+          <div className={styles.topics}>
+            {tags.map((t) => (
+              <Link key={t.slug} href={`/tags/${t.slug}`} className="chip">
+                {t.name} <span className={styles.count}>{t.count}</span>
+              </Link>
             ))}
           </div>
-          <div className={styles.viewAll}>
-            <Link href="/blog" className="main-button">
-              View All Posts
-            </Link>
-          </div>
+        </section>
+      )}
+
+      {total === 0 && (
+        <section className={`container ${styles.section}`}>
+          <p className={styles.empty}>No articles yet — the first one is on its way.</p>
         </section>
       )}
     </>

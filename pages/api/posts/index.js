@@ -1,32 +1,31 @@
 import { db } from "../../../lib/db";
 import { posts } from "../../../lib/schema";
 import { desc, eq } from "drizzle-orm";
-
-function isAdmin(req) {
-  return req.cookies?.admin_token === process.env.ADMIN_SECRET;
-}
+import { requireAdmin } from "../../../lib/auth";
+import { parsePostInput } from "../../../lib/validate";
+import { revalidatePost } from "../../../lib/revalidate";
+import { readingStats } from "../../../lib/markdown";
 
 export default async function handler(req, res) {
+  if (!(await requireAdmin(req, res))) return;
+
   if (req.method === "GET") {
-    const rows = isAdmin(req)
-      ? await db.select().from(posts).orderBy(desc(posts.createdAt))
-      : await db.select().from(posts).where(eq(posts.published, true)).orderBy(desc(posts.createdAt));
-    return res.json(rows);
+    const rows = await db.select().from(posts).orderBy(desc(posts.createdAt));
+    // The dashboard only needs metadata, not whole post bodies.
+    return res.json(
+      rows.map(({ content, ...p }) => ({ ...p, wordCount: readingStats(content).wordCount }))
+    );
   }
 
   if (req.method === "POST") {
-    if (!isAdmin(req)) return res.status(401).json({ error: "Unauthorized" });
+    const { data, error } = parsePostInput(req.body);
+    if (error) return res.status(400).json({ error });
 
-    const { title, slug, excerpt, content, tags, published } = req.body;
-    if (!title || !slug || !content) {
-      return res.status(400).json({ error: "title, slug and content are required" });
-    }
+    const [taken] = await db.select({ id: posts.id }).from(posts).where(eq(posts.slug, data.slug));
+    if (taken) return res.status(409).json({ error: "That slug is already used by another post." });
 
-    const [post] = await db
-      .insert(posts)
-      .values({ title, slug, excerpt, content, tags: tags || [], published: !!published })
-      .returning();
-
+    const [post] = await db.insert(posts).values(data).returning();
+    await revalidatePost(res, { slugs: [post.slug], tags: post.tags });
     return res.status(201).json(post);
   }
 

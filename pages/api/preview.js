@@ -9,6 +9,6 @@ export default async function handler(req, res) {
   if (!(await requireAdmin(req, res))) return;
 
   const content = typeof req.body?.content === "string" ? req.body.content : "";
-  const { html, toc } = await renderMarkdown(content);
+  const { html, toc } = await renderMarkdown(content, { title: typeof req.body?.title === "string" ? req.body.title : "" });
   return res.json({ html, toc, ...readingStats(content) });
 }

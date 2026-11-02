@@ -7,7 +7,7 @@ import { useToast } from "./admin/Toast";
 import { api, uploadImage } from "../lib/client";
 import { SITE, ogImageUrl } from "../lib/site";
 import { slugify } from "../lib/utils";
-import { describe, extractKeywords, markdownImages, wordCount } from "../lib/seo";
+import { autoExcerpt, extractKeywords, markdownImages, metaDescription, wordCount } from "../lib/seo";
 import styles from "../styles/Admin.module.css";
 
 const toLocalInput = (iso) => {
@@ -136,7 +136,7 @@ export default function PostEditor({ initial }) {
   useEffect(() => {
     if (view === "write") return;
     const t = setTimeout(() => {
-      api("/api/preview", { method: "POST", body: { content: form.content } })
+      api("/api/preview", { method: "POST", body: { content: form.content, title: form.title } })
         .then((r) => setPreview({ html: r.html, words: r.wordCount, readingTime: r.readingTime }))
         .catch(() => {});
     }, 450);
@@ -304,21 +304,25 @@ export default function PostEditor({ initial }) {
   }
 
   // ── SEO assistant: everything below is derived live from what you write ──
-  const autoDesc = useMemo(() => describe(form.content, ""), [form.content]);
+  const autoDesc = useMemo(
+    () => metaDescription({ excerpt: form.excerpt, content: form.content, title: form.title }),
+    [form.excerpt, form.content, form.title]
+  );
+  const autoEx = useMemo(() => autoExcerpt(form.content), [form.content]);
   const suggested = useMemo(
     () => extractKeywords({ title: form.title, tags: [], content: form.content, limit: 8 }).filter((k) => !form.tags.some((t) => t.toLowerCase() === k.toLowerCase())),
     [form.title, form.content, form.tags]
   );
   const seoTitle = form.seoTitle || form.title || "Post title";
-  const seoDesc = form.seoDescription || form.excerpt || autoDesc || "Your meta description appears here.";
-  const descLen = (form.seoDescription || form.excerpt || autoDesc).length;
+  const seoDesc = form.seoDescription || autoDesc || "Your meta description appears here.";
+  const descLen = (form.seoDescription || autoDesc).length;
   const titleLen = (form.seoTitle || form.title).length;
   const imgs = useMemo(() => markdownImages(form.content), [form.content]);
   const wc = useMemo(() => wordCount(form.content), [form.content]);
   const checks = [
     [titleLen >= 25 && titleLen <= 60, `Title length ${titleLen} (aim for 25–60 characters)`],
     [descLen >= 110 && descLen <= 160, `Description length ${descLen} (aim for 110–160 characters)`],
-    [!!form.excerpt || !!form.seoDescription, "Has a hand-written excerpt or meta description"],
+    [!!form.excerpt || !!form.seoDescription, "Hand-written excerpt or description (an automatic one is used if empty)"],
     [!!form.coverImage, "Has a cover image (used for cards and the share preview)"],
     [form.tags.length >= 2, `Has 2+ tags (${form.tags.length})`],
     [wc >= 300, `Word count ${wc} (300+ reads as substantial)`],
@@ -475,8 +479,8 @@ export default function PostEditor({ initial }) {
 
           <label className={styles.field}>
             <span>Excerpt</span>
-            <textarea className={styles.input} rows={3} value={form.excerpt} onChange={(e) => set({ excerpt: e.target.value })} maxLength={400} placeholder="One or two sentences for cards, search results & social shares" />
-            <small>{form.excerpt.length}/400</small>
+            <textarea className={styles.input} rows={3} value={form.excerpt} onChange={(e) => set({ excerpt: e.target.value })} maxLength={400} placeholder={autoEx || "One or two sentences for cards, search results & social shares"} />
+            <small>{form.excerpt.length}/400{!form.excerpt && autoEx ? " · left empty, so the opening of your article is used" : ""}</small>
           </label>
 
           <div className={styles.field}>
@@ -562,10 +566,10 @@ export default function PostEditor({ initial }) {
             </label>
             <label className={styles.field}>
               <span>Meta description</span>
-              <textarea className={styles.input} rows={3} value={form.seoDescription} onChange={(e) => set({ seoDescription: e.target.value })} placeholder={form.excerpt || autoDesc} maxLength={300} />
+              <textarea className={styles.input} rows={3} value={form.seoDescription} onChange={(e) => set({ seoDescription: e.target.value })} placeholder={autoDesc} maxLength={300} />
               <small className={descLen > 160 ? styles.warn : ""}>
                 {descLen}/160 recommended
-                {!form.seoDescription && !form.excerpt && autoDesc ? " · auto-generated from your first paragraph" : ""}
+                {!form.seoDescription && autoDesc ? " · auto-generated from your title, excerpt and text" : ""}
               </small>
             </label>
 

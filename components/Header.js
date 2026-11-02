@@ -63,12 +63,12 @@ export default function Header() {
         </nav>
 
         <div className={styles.actions}>
-          <a href="/feed.xml" className={styles.iconBtn} aria-label="RSS feed" title="RSS feed">
+          <Link href="/subscribe" className={styles.iconBtn} aria-label="Subscribe" title="Subscribe via RSS">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16" />
               <circle cx="5" cy="19" r="1.2" fill="currentColor" />
             </svg>
-          </a>
+          </Link>
           <button
             className={`${styles.iconBtn} ${styles.burger}`}
             onClick={() => setOpen((o) => !o)}

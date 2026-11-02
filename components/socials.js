@@ -46,7 +46,7 @@ export const socials = [
   },
   {
     name: "Email",
-    href: "mailto:prodhosh3@gmail.com",
+    href: "mailto:hello@prodhosh.me",
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
         <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h.91L12 10.09l9.455-6.269h.909A1.636 1.636 0 0 1 24 5.457z" />

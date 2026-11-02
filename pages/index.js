@@ -66,9 +66,9 @@ export default function Home({ allPosts, total, tags }) {
             <Link href="/blog" className="main-button">
               Read the articles
             </Link>
-            <a href="/feed.xml" className="ghost-button">
-              Subscribe via RSS
-            </a>
+            <Link href="/subscribe" className="ghost-button">
+              Subscribe
+            </Link>
           </div>
           <dl className={styles.stats}>
             <div>

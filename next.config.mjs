@@ -19,6 +19,10 @@ const csp = [
 const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: true,
+
+  // Dev only: keep compiled pages alive. By default Next drops pages after ~25s of inactivity,
+  // which changes the build hash and makes every other open tab full-reload in a loop.
+  onDemandEntries: { maxInactiveAge: 60 * 60 * 1000, pagesBufferLength: 20 },
   poweredByHeader: false,
 
   async rewrites() {
@@ -53,10 +57,17 @@ const nextConfig = {
         source: "/fonts/(.*)",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
-      {
-        source: "/_next/static/(.*)",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
+      // Production only. In dev the chunk filenames are NOT content-hashed, so an immutable
+      // header makes the browser keep a stale webpack.js forever and Fast Refresh
+      // full-reloads in an endless loop after every restart. Next already caches these in prod.
+      ...(isProd
+        ? [
+            {
+              source: "/_next/static/(.*)",
+              headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+            },
+          ]
+        : []),
     ];
   },
 };

@@ -35,6 +35,7 @@ export default function Footer() {
           <h2 className={styles.colTitle}>Blog</h2>
           <Link href="/blog">All articles</Link>
           <Link href="/tags">Topics</Link>
+          <Link href="/subscribe">Subscribe</Link>
           <a href="/feed.xml">RSS feed</a>
           <a href="/sitemap.xml">Sitemap</a>
         </nav>

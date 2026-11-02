@@ -112,6 +112,6 @@ Made by [Prodhosh VS](https://prodhosh.me)
 [![Twitter](https://img.shields.io/badge/Twitter-prodhosh3-1D9BF0?style=flat-square&logo=x)](https://twitter.com/prodhosh3)
 [![Instagram](https://img.shields.io/badge/Instagram-itzprodhosh-E4405F?style=flat-square&logo=instagram)](https://www.instagram.com/itzprodhosh/)
 [![Discord](https://img.shields.io/badge/Discord-itzprodhoshh-5865F2?style=flat-square&logo=discord)](https://discord.com/users/itzprodhoshh)
-[![Email](https://img.shields.io/badge/Email-prodhosh3@gmail.com-EA4335?style=flat-square&logo=gmail)](mailto:prodhosh3@gmail.com)
+[![Email](https://img.shields.io/badge/Email-hello@prodhosh.me-EA4335?style=flat-square&logo=gmail)](mailto:hello@prodhosh.me)
 
 </div>

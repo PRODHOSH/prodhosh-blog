@@ -9,3 +9,11 @@
   flex: 1;
   width: 100%;
 }
+
+/* The public site is scaled up 10% on desktop (same as browser zoom 110%). */
+@media (min-width: 900px) {
+  .layout {
+    zoom: 1.1;
+    min-height: calc(100dvh / 1.1);
+  }
+}

@@ -153,13 +153,7 @@ export default function Post({ postData }) {
           </div>
         </header>
 
-        {coverImage && (
-          <figure className={styles.cover}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={coverImage} alt={title} />
-          </figure>
-        )}
-
+        {/* The cover is the post's face on cards and share previews. Inside the post the title is already right here, so it is not repeated. */}
         <div className={styles.layout}>
           <article className={styles.article}>
             <TableOfContents toc={toc} />

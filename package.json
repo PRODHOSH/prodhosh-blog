@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node init && next dev --port 3001",
-    "build": "node init && next build",
-    "start": "node init && next start",
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start",
     "db:push": "drizzle-kit push --config=drizzle.config.cjs",
     "db:studio": "drizzle-kit studio --config=drizzle.config.cjs",
     "setup:2fa": "node scripts/setup-totp.mjs"

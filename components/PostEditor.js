@@ -331,7 +331,8 @@ export default function PostEditor({ initial }) {
     [form.slug.length > 0 && form.slug.length <= 60, `Short slug (${form.slug.length} chars)`],
     [form.tags.some((t) => `${form.title} ${autoDesc}`.toLowerCase().includes(t.toLowerCase())), "A tag appears in the title or opening text"],
   ];
-  const ogPreview = ogImageUrl({ title: seoTitle, tags: form.tags, cover: form.coverImage.startsWith("/media/") ? form.coverImage : "" }).replace(SITE.url, "");
+  // Matches the post page: a custom cover is shared as is, otherwise a card is generated.
+  const ogPreview = form.coverImage.trim() || ogImageUrl({ title: seoTitle, tags: form.tags }).replace(SITE.url, "");
 
   const status = !form.published ? "Draft" : form.publishedAt && new Date(form.publishedAt) > new Date() ? "Scheduled" : "Live";
 
@@ -607,7 +608,7 @@ export default function PostEditor({ initial }) {
               <span>Social share card</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className={styles.ogPreview} src={ogPreview} alt="Social card preview" loading="lazy" />
-              <small>Generated automatically from the title, tags and cover.</small>
+              <small>{form.coverImage.trim() ? "Your cover image is shared as is." : "Generated automatically from the title and tags. Add a cover image to use your own."}</small>
             </div>
           </details>
 

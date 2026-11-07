@@ -33,7 +33,8 @@ export default function Post({ postData }) {
   const path = `/blog/${slug}`;
   const url = absUrl(path);
   const headline = seoTitle || title;
-  const image = ogImageUrl({ title: headline, tags, date, readingTime, cover: coverImage });
+  // A custom cover is a finished design, so share it as is. Only posts without one get the generated card.
+  const image = coverImage ? absUrl(coverImage) : ogImageUrl({ title: headline, tags, date, readingTime });
   const wasUpdated = updated && new Date(updated).getTime() - new Date(date).getTime() > 24 * 3600 * 1000;
 
   // Add a copy button to every code block.
@@ -85,7 +86,7 @@ export default function Post({ postData }) {
             alternativeHeadline: headline !== title ? title : undefined,
             description,
             abstract: excerpt || undefined,
-            image: [image, ...(coverImage ? [absUrl(coverImage)] : []), ...images.map(absUrl)],
+            image: [image, ...images.map(absUrl)],
             thumbnailUrl: coverImage ? absUrl(coverImage) : image,
             url,
             mainEntityOfPage: { "@type": "WebPage", "@id": url },

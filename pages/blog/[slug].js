@@ -6,6 +6,7 @@ import BlogCard from "../../components/BlogCard";
 import ReadingProgress from "../../components/post/ReadingProgress";
 import TableOfContents from "../../components/post/TableOfContents";
 import ShareBar from "../../components/post/ShareBar";
+import { enhanceCheatSheet } from "../../components/post/cheatSheet";
 import Giscus from "../../components/post/Giscus";
 import { getAllPostSlugs, getPostData } from "../../lib/posts";
 import { SITE, absUrl, ids, ogImageUrl } from "../../lib/site";
@@ -63,6 +64,34 @@ export default function Post({ postData }) {
       pre.appendChild(btn);
       cleanups.push(() => btn.removeEventListener("click", onClick));
     });
+    // A collapsed <details> that holds a code block (e.g. a long prompt) gets its own Copy button
+    // on the summary, so readers can copy without expanding it.
+    root.querySelectorAll("details").forEach((det) => {
+      const pre = det.querySelector("pre");
+      const summary = det.querySelector("summary");
+      if (!pre || !summary || summary.querySelector(".copy-btn")) return;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-btn copy-btn-summary";
+      btn.textContent = "Copy prompt";
+      const onClick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const text = pre.querySelector("code")?.innerText ?? pre.innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          btn.textContent = "Copied ✓";
+        } catch {
+          btn.textContent = "Open & press Ctrl+C";
+        }
+        setTimeout(() => (btn.textContent = "Copy prompt"), 1800);
+      };
+      btn.addEventListener("click", onClick);
+      summary.appendChild(btn);
+      cleanups.push(() => btn.removeEventListener("click", onClick));
+    });
+    // Copy / image / WhatsApp toolbar on the cheat sheet table.
+    cleanups.push(enhanceCheatSheet(root, { title, url }));
     return () => cleanups.forEach((fn) => fn());
   }, [contentHtml]);
 

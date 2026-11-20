@@ -237,3 +237,67 @@
   border-bottom-width: 2px;
   background: var(--surface);
 }
+
+/* collapsible blocks (e.g. a long copy-paste prompt) */
+.prose details {
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  margin-block: 1.6em;
+  padding: 0;
+  overflow: hidden;
+}
+.prose details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+.prose details > summary::-webkit-details-marker {
+  display: none;
+}
+.prose details > summary::before {
+  content: "▸";
+  margin-right: 8px;
+  color: var(--accent);
+}
+.prose details[open] > summary::before {
+  content: "▾";
+}
+.prose details > summary {
+  justify-content: flex-start;
+}
+.prose details pre {
+  margin: 0;
+  border-radius: 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+.prose .copy-btn-summary {
+  position: static;
+  margin-left: auto;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* toolbar above the cheat sheet table */
+.prose .sheet-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 1.2em 0 0.8em;
+}
+.prose .sheet-bar .chip {
+  cursor: pointer;
+}
+.prose .sheet-status {
+  font-family: var(--f-mono);
+  font-size: 12.5px;
+  color: var(--accent-ink);
+}
